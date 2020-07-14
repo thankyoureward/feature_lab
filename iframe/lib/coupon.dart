@@ -20,14 +20,14 @@ class Coupon extends StatelessWidget {
 
   Coupon({
     this.info,
-  });
+  }) {
+    callJS(info);
+  }
 
   @override
   Widget build(BuildContext context) {
     final PageController _pageController = PageController();
     final imageHeight = MediaQuery.of(context).size.width;
-
-    callJS();
 
     return Material(
       child: NotificationListener<ScrollNotification>(
@@ -595,21 +595,37 @@ class Coupon extends StatelessWidget {
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
   }
 
-  void callJS() {
-    // js.context.callMethod('alert', ['Hello from Dart!']);
-    // js.context.callMethod('createElement', ['meta']);
-    html.Element element1 = html.document.createElement('meta');
-    element1.setAttribute('property', 'og:url');
-    element1.setAttribute('content', 'https://thankyoureward.co.kr');
+  void callJS(CouponModel coupon) {
+    html.Node headNode = html.document.getElementsByTagName('head')[0];
+    html.Element elementUrl = html.document.createElement('meta');
+    elementUrl.setAttribute('property', 'og:url');
+    elementUrl.setAttribute('content', 'https://thankyoureward.co.kr');
 
-    // html.document.getElementsByTagName('head')[0].append(element1);
+    headNode.append(elementUrl);
 
-    // element1.setAttribute('content', 'https://thankyoureward.co.kr');
+    html.Element elementType = html.document.createElement('meta');
+    elementType.setAttribute('property', 'og:type');
+    elementType.setAttribute('content', 'website');
 
-    // List<html.Node> nodes = html.document.getElementsByTagName('meta');
+    headNode.append(elementType);
 
-    // nodes.forEach((element) {
-    //   debugPrint('${element.nodeName} ${element.}');
-    // });
+    html.Element elementTitle = html.document.createElement('meta');
+    elementTitle.setAttribute('property', 'og:title');
+    elementTitle.setAttribute(
+        'content', '${coupon.name} - 땡큐리워드 THANK YOU Reward');
+
+    headNode.append(elementTitle);
+
+    html.Element elementDescription = html.document.createElement('meta');
+    elementDescription.setAttribute('property', 'og:description');
+    elementDescription.setAttribute('content', '${coupon.description}');
+
+    headNode.append(elementDescription);
+
+    html.Element elementImage = html.document.createElement('meta');
+    elementImage.setAttribute('property', 'og:image');
+    elementImage.setAttribute('content', coupon.getPictureUrls()[0]);
+
+    headNode.append(elementImage);
   }
 }
