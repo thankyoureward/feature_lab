@@ -4,6 +4,7 @@ import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -125,21 +126,22 @@ class Coupon extends StatelessWidget {
                 ),
 
                 // web 환경인지 확인한다.
-                kIsWeb
-                    ? _buildButtonVisitThankYouWebpage(context)
-                    : Container(),
+                _buildButtonVisitThankYouWebpage(context),
 
-                // (Platform.isAndroid || Platform.isIOS)
-                //     ? Container()
-                //     : _buildButtonVisitThankYouWebpage(context),
-                // if (Platform.isAndroid || Platform.isIOS) {
-                //       // 설치되어 있다면 땡큐마켓에서 바로 볼 수 있도록 한다.
-
-                //       // 설치되지 않았다면 마켓으로 이동한다.
-                //     } else {
-                //       // https://thankyoureward.co.kr/로 이동합니다.
-
-                //     }
+                Column(
+                  children: [
+                    _buildButtonVisitStore(
+                      context,
+                      'assets/coin.png',
+                      'https://play.google.com/store/apps/details?id=com.facebook.katana',
+                    ),
+                    _buildButtonVisitStore(
+                      context,
+                      'assets/coin.png',
+                      'https://apps.apple.com/us/app/facebook/id284882215',
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -556,6 +558,42 @@ class Coupon extends StatelessWidget {
     );
   }
 
+  Widget _buildButtonVisitStore(
+      BuildContext context, String imagePath, String url) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        vertical: 20.0,
+      ),
+      width: 185.0,
+      height: 45.0,
+      child: RaisedButton(
+        onPressed: () async {
+          if (kIsWeb) {
+            // https://play.google.com/store/apps/details?id=com.floody.thank_you_reward
+            bool _canLaunch = await canLaunch(url);
+            if (_canLaunch) {
+              await launch(url);
+            }
+          } else {
+            // LaunchReview.launch(
+          //   androidAppId: "com.floody.thank_you_reward",
+          //   iOSAppId: "1516566788",
+          // );
+          }
+        },
+        color: _mainAccentColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Container(
+          child: Image.asset(
+            imagePath,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildButtonVisitThankYouWebpage(BuildContext context) {
     String url = 'https://thankyoureward.co.kr/';
 
@@ -567,11 +605,10 @@ class Coupon extends StatelessWidget {
       height: 45.0,
       child: RaisedButton(
         onPressed: () async {
-          // bool _canLaunch = await canLaunch(url);
-          // if (_canLaunch) {
-          //   await launch(url);
-          // }
-          // callJS();
+          bool _canLaunch = await canLaunch(url);
+          if (_canLaunch) {
+            await launch(url);
+          }
         },
         color: _mainAccentColor,
         shape: RoundedRectangleBorder(
