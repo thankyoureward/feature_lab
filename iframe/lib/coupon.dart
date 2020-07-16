@@ -1,5 +1,5 @@
-import 'dart:io' show Platform;
-import 'dart:js' as js;
+// import 'dart:io' show Platform;
+// import 'dart:js' as js;
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -128,19 +128,31 @@ class Coupon extends StatelessWidget {
                 // web 환경인지 확인한다.
                 _buildButtonVisitThankYouWebpage(context),
 
-                Column(
-                  children: [
-                    _buildButtonVisitStore(
-                      context,
-                      'assets/coin.png',
-                      'https://play.google.com/store/apps/details?id=com.facebook.katana',
-                    ),
-                    _buildButtonVisitStore(
-                      context,
-                      'assets/coin.png',
-                      'https://apps.apple.com/us/app/facebook/id284882215',
-                    ),
-                  ],
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10.0,
+                    horizontal: 10.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 6,
+                        child: _buildButtonVisitStore(
+                          context,
+                          'assets/app_store.png',
+                          'https://apps.apple.com/us/app/facebook/id284882215',
+                        ),
+                      ),
+                      Expanded(
+                        flex: 7,
+                        child: _buildButtonVisitStore(
+                          context,
+                          'assets/play_store.png',
+                          'https://play.google.com/store/apps/details?id=com.facebook.katana',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -560,36 +572,23 @@ class Coupon extends StatelessWidget {
 
   Widget _buildButtonVisitStore(
       BuildContext context, String imagePath, String url) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: 20.0,
-      ),
-      width: 185.0,
-      height: 45.0,
-      child: RaisedButton(
-        onPressed: () async {
-          if (kIsWeb) {
-            // https://play.google.com/store/apps/details?id=com.floody.thank_you_reward
-            bool _canLaunch = await canLaunch(url);
-            if (_canLaunch) {
-              await launch(url);
-            }
-          } else {
-            // LaunchReview.launch(
-          //   androidAppId: "com.floody.thank_you_reward",
-          //   iOSAppId: "1516566788",
-          // );
+    return GestureDetector(
+      onTap: () async {
+        if (kIsWeb) {
+          // https://play.google.com/store/apps/details?id=com.floody.thank_you_reward
+          bool _canLaunch = await canLaunch(url);
+          if (_canLaunch) {
+            await launch(url);
           }
-        },
-        color: _mainAccentColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Container(
-          child: Image.asset(
-            imagePath,
-          ),
-        ),
+        } else {
+          LaunchReview.launch(
+            androidAppId: "com.facebook.katana",
+            iOSAppId: "284882215",
+          );
+        }
+      },
+      child: Image.asset(
+        imagePath,
       ),
     );
   }
@@ -612,7 +611,7 @@ class Coupon extends StatelessWidget {
         },
         color: _mainAccentColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(5.0),
         ),
         child: Container(
           child: Text(
